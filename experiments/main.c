@@ -44,9 +44,9 @@
 #include <dirent.h>
 
 // DICL utility + Zipf distribution
-#include "../dicl/utility.h"
-#include "../dicl/cvector.h"
-#include "zipf.h"
+#include "../utilities/helper.h"
+#include "../utilities/cvector.h"
+#include "../utilities/zipf.h"
 
 #define VERSION_NUM	"1.0.8"
 
