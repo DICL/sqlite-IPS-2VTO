@@ -1,5 +1,5 @@
 # all sqlite impl
-PROGRAMS = mobibench_BC mobibench_2VTO mobibench_stock
+PROGRAMS = mobibench_BC mobibench_2VTO mobibench_stock mobibench_DHL_simulate
 
 # mobibench impl
 BENCHMARK = main.c
@@ -10,7 +10,9 @@ BENCHMARK = main.c
 # 	- To evaluate transaction size, please add compile flags `-DDHL_TEST_BATCH -DQUERIES_PER_TXN=4`
 # For real workloads:
 #		- Enable the optimization flag -O3
-# 		- Because Google Play Service workload is a background service, please set "wal_close_period = -1" (i.e. wal force close can't be done by user's interaction). Otherwise, leave it as it is in main.c ("wal_close_period = 100")
+# 		- Because Google Play Service workload is a background service, please set "wal_close_period = -1"
+#					i.e. wal force close can't be done by user's interaction.
+#				On other workloads, leave it as it is in main.c ("wal_close_period = 100")
 #		- Please find the traces in https://github.com/DICL/mobile-traces
 BENCHMARK_RECOVERY = recovery.c
 
@@ -68,6 +70,9 @@ mobibench_stock:
 mobibench_2VTO:
 	${CC} -o $@		$(BENCHMARK)	../sources/sqlite3_2VTO.c		$(LSP_CFLAGS)
 
+mobibench_DHL_simulate:
+	${CC} -o $@		$(BENCHMARK)	../sources/sqlite3_LSP.c		-DDHL_SIMULATION_PAGE_UTILIZATION $(LSP_CFLAGS)
+
 mobibench_BC:
 	${CC} -o $@		$(BENCHMARK)	../sources/sqlite3_BC.c			-DBEGIN_CONCURRENT	-DPRIVATE_CACHE	$(STOCK_CFLAGS)
 
@@ -115,6 +120,7 @@ facebook:
 
 clean :
 	@rm -rf mobibench_*
+	rm -rf recovery_*
 
 install:
 	adb push mobibench_* /sdcard

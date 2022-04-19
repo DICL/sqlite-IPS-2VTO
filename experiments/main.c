@@ -1704,8 +1704,14 @@ int thread_main_db(void* arg)
         rc = sqlite3_prepare_v2(db[0], "SELECT * FROM tblMyList0 WHERE ID = ?;", -1, &stm[0], NULL);
         assert(rc == SQLITE_OK);
         for(int jdx = 0; jdx < SIZE_1KB; ++jdx) {
-          char *update_string = (char*)calloc(strlen(UPDATE_STR), sizeof(char));
-          for(int x = 0; x < strlen(UPDATE_STR); ++x) {
+#ifdef DICL_EVALUATE_SPLIT_OVERHEAD
+          // DICL: variable record size to create overflow
+          int length = strlen(UPDATE_STR) + rand() % 20;
+#else
+          int length = strlen(UPDATE_STR);
+#endif
+          char *update_string = (char*)calloc(length, sizeof(char));
+          for(int x = 0; x < length; ++x) {
             update_string[x] = 'a' + rand() % 26;
           }
           sprintf(sql, "UPDATE tblMyList0 SET Value = '%s' WHERE ID = ?;", update_string);
